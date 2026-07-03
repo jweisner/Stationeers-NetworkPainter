@@ -4,7 +4,6 @@ using Assets.Scripts.Objects;
 using Assets.Scripts.Objects.Electrical;
 using Assets.Scripts.Objects.Pipes;
 using HarmonyLib;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace NetworkPainter
@@ -12,7 +11,6 @@ namespace NetworkPainter
     [HarmonyPatch(typeof(OnServer), nameof(OnServer.SetCustomColor))]
     public class NetworkPainterMod
     {
-        [UsedImplicitly]
         public static void Prefix(Thing thing, int colorIndex)
         {
             if (KeyManager.GetButton(KeyCode.LeftShift))
