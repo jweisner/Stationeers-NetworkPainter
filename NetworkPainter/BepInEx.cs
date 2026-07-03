@@ -13,6 +13,7 @@ namespace NetworkPainter
         {
             try
             {
+                MOD.Networking.RegisterMessage<PaintModeMessage>();
                 var harmony = new Harmony(MOD.ID.Name);
                 harmony.PatchAll(typeof(NetworkPainterEntrypoint).Assembly);
                 Debug.Log("[NetworkPainter]: Patch succeeded");
