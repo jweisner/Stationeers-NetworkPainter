@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="../Stationeers.User.props" />
+  <Import Project="../Deploy.User.props" Condition="Exists('../Deploy.User.props')" />
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
@@ -34,5 +35,10 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+
+  <Target Name="DeployLocalMod" AfterTargets="Build" Condition="'$(StationeersSaveDataDirectory)' != ''">
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)" />
+    <Copy SourceFiles="About/About.xml" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)/About" />
+  </Target>
 
 </Project>
