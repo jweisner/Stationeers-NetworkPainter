@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using Assets.Scripts.Networking;
 using Assets.Scripts.Objects;
 using Assets.Scripts.Objects.Electrical;
@@ -16,7 +17,21 @@ namespace NetworkPainter
 
         public static void Prefix(Thing thing, int colorIndex)
         {
-            var mode = PaintModeStore.Get(CurrentClientId);
+            PaintMode mode;
+            if (CurrentClientId == 0)
+            {
+                // Singleplayer or listen-server host: no message was sent, read keys directly.
+                if (KeyManager.GetButton(KeyCode.LeftShift))
+                    mode = PaintMode.Single;
+                else if (KeyManager.GetButton(KeyCode.LeftControl))
+                    mode = PaintMode.Checkered;
+                else
+                    mode = PaintMode.Network;
+            }
+            else
+            {
+                mode = PaintModeStore.Get(CurrentClientId);
+            }
 
             if (mode == PaintMode.Single)
                 return;
