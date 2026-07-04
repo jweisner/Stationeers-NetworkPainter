@@ -17,20 +17,25 @@ namespace NetworkPainter
 
         public static void Prefix(Thing thing, int colorIndex)
         {
+            UnityEngine.Debug.Log($"[NetworkPainter] SetCustomColor.Prefix: thing={thing?.GetType().Name} colorIndex={colorIndex} CurrentClientId={CurrentClientId} IsServer={NetworkManager.IsServer} IsClient={NetworkManager.IsClient}");
+
             PaintMode mode;
             if (CurrentClientId == 0)
             {
-                // Singleplayer or listen-server host: no message was sent, read keys directly.
-                if (KeyManager.GetButton(KeyCode.LeftShift))
+                var shift = KeyManager.GetButton(KeyCode.LeftShift);
+                var ctrl = KeyManager.GetButton(KeyCode.LeftControl);
+                if (shift)
                     mode = PaintMode.Single;
-                else if (KeyManager.GetButton(KeyCode.LeftControl))
+                else if (ctrl)
                     mode = PaintMode.Checkered;
                 else
                     mode = PaintMode.Network;
+                UnityEngine.Debug.Log($"[NetworkPainter] SetCustomColor: local path shift={shift} ctrl={ctrl} mode={mode}");
             }
             else
             {
                 mode = PaintModeStore.Get(CurrentClientId);
+                UnityEngine.Debug.Log($"[NetworkPainter] SetCustomColor: remote path clientId={CurrentClientId} mode={mode}");
             }
 
             if (mode == PaintMode.Single)
@@ -100,6 +105,7 @@ namespace NetworkPainter
     {
         public static void Prefix(long hostId)
         {
+            UnityEngine.Debug.Log($"[NetworkPainter] ThingColorMessage.Prefix: hostId={hostId}");
             NetworkPainterMod.CurrentClientId = hostId;
         }
     }

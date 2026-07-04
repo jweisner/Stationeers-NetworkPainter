@@ -1,28 +1,32 @@
 using System;
+using BepInEx;
 using HarmonyLib;
 using LaunchPadBooster;
 using UnityEngine;
 
 namespace NetworkPainter
 {
-    public class NetworkPainterEntrypoint : MonoBehaviour
+    [BepInPlugin("net.elmo.stationeers.NetworkPainter", "NetworkPainter", "1.5")]
+    public class NetworkPainterPlugin : BaseUnityPlugin
     {
-        public static readonly Mod MOD = new Mod("net.elmo.stationeers.NetworkPainter", "1.5");
+        public static readonly Mod MOD = new Mod("NetworkPainter", "1.5");
 
-        public void OnLoaded()
+        void Awake()
         {
-            try
+            MOD.Networking.RegisterMessage<PaintModeMessage>();
+            var harmony = new Harmony("net.elmo.stationeers.NetworkPainter");
+            foreach (var type in typeof(NetworkPainterPlugin).Assembly.GetTypes())
             {
-                MOD.Networking.RegisterMessage<PaintModeMessage>();
-                var harmony = new Harmony(MOD.ID.Name);
-                harmony.PatchAll(typeof(NetworkPainterEntrypoint).Assembly);
-                Debug.Log("[NetworkPainter]: Patch succeeded");
+                try
+                {
+                    harmony.CreateClassProcessor(type).Patch();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"[NetworkPainter]: Patch failed for {type.Name}: {e.Message}");
+                }
             }
-            catch (Exception e)
-            {
-                Debug.Log("[NetworkPainter]: Patch failed");
-                Debug.Log(e.ToString());
-            }
+            Debug.Log("[NetworkPainter]: PatchAll complete");
         }
     }
 }

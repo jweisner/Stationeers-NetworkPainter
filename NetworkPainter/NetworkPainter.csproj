@@ -14,6 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(StationeersDirectory)/BepInEx/core/BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(StationeersDirectory)/BepInEx/core/0Harmony.dll</HintPath>
       <Private>false</Private>
@@ -32,6 +36,10 @@
     </Reference>
     <Reference Include="LaunchPadBooster">
       <HintPath>$(StationeersDirectory)/BepInEx/plugins/StationeersLaunchPad/LaunchPadBooster.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="StationeersMods.Interface">
+      <HintPath>$(StationeersDirectory)/BepInEx/plugins/StationeersLaunchPad/StationeersMods.Interface.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

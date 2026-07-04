@@ -27,7 +27,11 @@ namespace NetworkPainter
 
         public void Process(long clientId)
         {
+            UnityEngine.Debug.Log($"[NetworkPainter] PaintModeMessage.Process: clientId={clientId} mode={Mode}");
             PaintModeStore.Set(clientId, Mode);
+            // Also cache the clientId so SetCustomColor can look it up without
+            // ThingColorMessage (which is only sent on listen-server, not dedicated).
+            NetworkPainterMod.CurrentClientId = clientId;
         }
     }
 
@@ -45,27 +49,31 @@ namespace NetworkPainter
         }
     }
 
-    // Patches OnServer.AttackWith on the client: if the active-hand item is a
-    // sprayer and we're a client, send PaintModeMessage before the game sends
-    // its own AttackWithMessage, so the server has the mode ready.
+    // Fires on both client and server when a tool is used on a thing.
+    // On the client (IsClient=true, RunSimulation=false) this runs before
+    // AttackWithMessage is sent, so we read key state here and send
+    // PaintModeMessage to the server ahead of the paint.
     [HarmonyPatch(typeof(OnServer), nameof(OnServer.AttackWith))]
-    public class PaintModeClientPatch
+    public class PaintModeAttackWithPatch
     {
         public static void Prefix(Thing attackParent, byte activeHandSlotId)
         {
             if (!NetworkManager.IsClient)
                 return;
 
-            var slot = attackParent?.Slots?[activeHandSlotId];
-            if (slot?.Get() is not ISprayer)
+            var item = attackParent?.Slots[activeHandSlotId]?.Occupant;
+            if (item is not Assets.Scripts.Objects.Items.ISprayer)
                 return;
 
-            var mode = PaintMode.Network;
+            PaintMode mode;
             if (KeyManager.GetButton(KeyCode.LeftShift))
                 mode = PaintMode.Single;
             else if (KeyManager.GetButton(KeyCode.LeftControl))
                 mode = PaintMode.Checkered;
+            else
+                mode = PaintMode.Network;
 
+            UnityEngine.Debug.Log($"[NetworkPainter] OnServer.AttackWith: sending PaintModeMessage mode={mode}");
             new PaintModeMessage { Mode = mode }.SendToHost();
         }
     }
