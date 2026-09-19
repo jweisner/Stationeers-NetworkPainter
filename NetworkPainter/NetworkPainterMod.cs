@@ -57,8 +57,14 @@ namespace NetworkPainter
                             NPutility.TryPaint(thing, item.GetAsThing, colorIndex, checkered);
                     break;
                 case Pipe pipe when pipe.PipeNetwork != null:
+                    // Only actual pipe segments (Piping / PipingLong). Everything
+                    // else deriving from Pipe is a device sitting on the run --
+                    // tanks, vents/cowls, drains, connectors, planters. Painting
+                    // those is wrong under checkered paint in particular, where
+                    // the alternation encodes a gas mix or a two-colour label and
+                    // a device picking up one half of it reads as wrong.
                     foreach (var item in pipe.PipeNetwork.StructureList)
-                        if (!(item is PassiveVent) && !(item is HydroponicTray))
+                        if (item is Piping)
                             NPutility.TryPaint(thing, item.GetAsThing, colorIndex, checkered);
                     break;
                 case Cable cable when cable.CableNetwork != null:
