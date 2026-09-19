@@ -61,7 +61,7 @@ namespace NetworkPainter
             if (!NetworkManager.IsClient)
                 return;
 
-            var item = attackParent?.Slots[activeHandSlotId]?.Occupant;
+            var item = attackParent?.Slots[activeHandSlotId]?.Get();
             if (item is not Assets.Scripts.Objects.Items.ISprayer)
                 return;
 

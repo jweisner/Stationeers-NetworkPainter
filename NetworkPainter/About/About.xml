@@ -2,6 +2,6 @@
   <Name>NetworkPainter</Name>
   <ModID>net.elmo.stationeers.NetworkPainter</ModID>
   <Author>elmo</Author>
-  <Version>1.6</Version>
-  <Description>Paint entire pipe, cable, or chute networks with one click. Hold Shift to paint a single item, Ctrl for checkered/alternating paint. Works in multiplayer.</Description>
+  <Version>1.7</Version>
+  <Description>Paint entire pipe, cable, chute, or robotic arm rail networks with one click. Hold Shift to paint a single item, Ctrl for checkered/alternating paint. Works in multiplayer.</Description>
 </ModMetadata>
