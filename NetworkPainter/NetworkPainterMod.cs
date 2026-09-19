@@ -40,11 +40,11 @@ namespace NetworkPainter
                     var shift = KeyManager.GetButton(KeyCode.LeftShift);
                     var ctrl = KeyManager.GetButton(KeyCode.LeftControl);
                     if (shift)
-                        mode = PaintMode.Single;
+                        mode = PaintMode.Network;
                     else if (ctrl)
                         mode = PaintMode.Checkered;
                     else
-                        mode = PaintMode.Network;
+                        mode = PaintMode.Single;
                     UnityEngine.Debug.Log($"[NetworkPainter] SetCustomColor: local path shift={shift} ctrl={ctrl} mode={mode}");
                 }
                 else

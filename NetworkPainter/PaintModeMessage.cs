@@ -67,11 +67,11 @@ namespace NetworkPainter
 
             PaintMode mode;
             if (KeyManager.GetButton(KeyCode.LeftShift))
-                mode = PaintMode.Single;
+                mode = PaintMode.Network;
             else if (KeyManager.GetButton(KeyCode.LeftControl))
                 mode = PaintMode.Checkered;
             else
-                mode = PaintMode.Network;
+                mode = PaintMode.Single;
 
             UnityEngine.Debug.Log($"[NetworkPainter] OnServer.AttackWith: sending PaintModeMessage mode={mode}");
             new PaintModeMessage { Mode = mode }.SendToHost();

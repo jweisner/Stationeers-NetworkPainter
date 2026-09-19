@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace NetworkPainter
 {
-    [BepInPlugin("net.elmo.stationeers.NetworkPainter", "NetworkPainter", "1.7")]
+    [BepInPlugin("net.elmo.stationeers.NetworkPainter", "NetworkPainter", "1.8")]
     public class NetworkPainterPlugin : BaseUnityPlugin
     {
-        public static readonly Mod MOD = new Mod("NetworkPainter", "1.7");
+        public static readonly Mod MOD = new Mod("NetworkPainter", "1.8");
 
         void Awake()
         {
