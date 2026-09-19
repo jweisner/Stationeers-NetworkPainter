@@ -45,23 +45,23 @@ namespace NetworkPainter
 
             if (thing is HydroponicTray tray)
             {
-                foreach (Pipe item in tray.PipeNetwork.StructureList)
-                    if (item is HydroponicTray && (!checkered || NPutility.CheckeredPaintCheck(thing, item)))
-                        NPutility.Paint(item, colorIndex);
+                foreach (var item in tray.PipeNetwork.StructureList)
+                    if (item is HydroponicTray && (!checkered || NPutility.CheckeredPaintCheck(thing, item.GetAsThing)))
+                        NPutility.Paint(item.GetAsThing, colorIndex);
                 return;
             }
             if (thing is PassiveVent pv)
             {
-                foreach (Pipe item in pv.PipeNetwork.StructureList)
-                    if (item is PassiveVent && (!checkered || NPutility.CheckeredPaintCheck(thing, item)))
-                        NPutility.Paint(item, colorIndex);
+                foreach (var item in pv.PipeNetwork.StructureList)
+                    if (item is PassiveVent && (!checkered || NPutility.CheckeredPaintCheck(thing, item.GetAsThing)))
+                        NPutility.Paint(item.GetAsThing, colorIndex);
                 return;
             }
             if (thing is Pipe pipe)
             {
-                foreach (Pipe item in pipe.PipeNetwork.StructureList)
-                    if (!(item is PassiveVent) && !(item is HydroponicTray) && (!checkered || NPutility.CheckeredPaintCheck(thing, item)))
-                        NPutility.Paint(item, colorIndex);
+                foreach (var item in pipe.PipeNetwork.StructureList)
+                    if (!(item is PassiveVent) && !(item is HydroponicTray) && (!checkered || NPutility.CheckeredPaintCheck(thing, item.GetAsThing)))
+                        NPutility.Paint(item.GetAsThing, colorIndex);
                 return;
             }
             if (thing is Cable cable)
@@ -73,9 +73,9 @@ namespace NetworkPainter
             }
             if (thing is Chute chute)
             {
-                foreach (Chute item in chute.ChuteNetwork.StructureList)
-                    if (!checkered || NPutility.CheckeredPaintCheck(thing, item))
-                        NPutility.Paint(item, colorIndex);
+                foreach (var item in chute.ChuteNetwork.StructureList)
+                    if (!checkered || NPutility.CheckeredPaintCheck(thing, item.GetAsThing))
+                        NPutility.Paint(item.GetAsThing, colorIndex);
                 return;
             }
         }
