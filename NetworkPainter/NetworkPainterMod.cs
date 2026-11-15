@@ -4,6 +4,9 @@ using Assets.Scripts.Objects;
 using Assets.Scripts.Objects.Electrical;
 using Assets.Scripts.Objects.Pipes;
 using HarmonyLib;
+using Networks;
+using System;
+using System.Collections.Generic;
 using Objects.RoboticArm;
 using UnityEngine;
 
@@ -77,6 +80,11 @@ namespace NetworkPainter
                         // those is wrong under checkered paint in particular, where
                         // the alternation encodes a gas mix or a two-colour label and
                         // a device picking up one half of it reads as wrong.
+                        if (checkered)
+                        {
+                            NPutility.PaintCheckeredByHops(pipe, pipe.PipeNetwork.StructureList, item => item is Piping, colorIndex);
+                            break;
+                        }
                         foreach (var item in pipe.PipeNetwork.StructureList)
                             if (item is Piping)
                                 NPutility.TryPaint(thing, item.GetAsThing, colorIndex, checkered);
@@ -116,6 +124,51 @@ namespace NetworkPainter
                 return;
 
             Paint(item, colorIndex);
+        }
+
+        // Checkered by hop count from the sprayed item rather than by grid
+        // position. Position parity assumes every piece occupies one grid
+        // cell, which a PipingLong (3, 5 or 10 cells, one Position) does not,
+        // so the alternation broke at the first long pipe. On a network of
+        // single-cell pieces the two are identical: the grid is bipartite, so
+        // hop distance and coordinate parity always agree.
+        //
+        // Every member is traversed, including devices that are never painted,
+        // so a tank still counts as one step in the alternation just as its
+        // cell did under position parity. Traversal is limited to the
+        // network's own members so it cannot leak through into a neighbour.
+        public static void PaintCheckeredByHops(INetworkedStructure start, List<INetworkedStructure> members, Func<INetworkedStructure, bool> paintable, int colorIndex)
+        {
+            var inNetwork = new HashSet<INetworkedStructure>(members);
+            var depth = new Dictionary<INetworkedStructure, int> { [start] = 0 };
+            var queue = new Queue<INetworkedStructure>();
+            queue.Enqueue(start);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                int d = depth[current];
+
+                if (d % 2 == 0 && paintable(current))
+                {
+                    var thing = current.GetAsThing;
+                    if (thing != null)
+                        Paint(thing, colorIndex);
+                }
+
+                var neighbours = current.ConnectedStructures();
+                if (neighbours == null)
+                    continue;
+                foreach (var next in neighbours)
+                {
+                    if (next == null || !inNetwork.Contains(next) || depth.ContainsKey(next))
+                        continue;
+                    depth[next] = d + 1;
+                    queue.Enqueue(next);
+                }
+            }
+
+            UnityEngine.Debug.Log($"[NetworkPainter] checkered walk reached {depth.Count} of {members.Count} network members");
         }
 
         private static void Paint(Thing thing, int colorIndex)
